@@ -503,6 +503,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1492866753}
+  - component: {fileID: 1492866754}
   m_Layer: 0
   m_Name: ApplicationController
   m_TagString: Untagged
@@ -525,6 +526,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1492866754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1492866752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b1e634006d64541aa35de8c045392a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clientPrefab: {fileID: -9211768532366387612, guid: 0f0e5fde94a7ec64aaef18b7fa8635e9, type: 3}
+  hostPrefab: {fileID: -4089438842946862779, guid: 84261e8626f077f449e37b268dc1cd34, type: 3}
 --- !u!1 &1560409311
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,7 +603,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1560409312}
-    PlayerPrefab: {fileID: 0}
+    PlayerPrefab: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: b4fb0d08979401e4f853cee79a2be77f, type: 2}
@@ -610,6 +625,7 @@ MonoBehaviour:
     NetworkTopology: 0
     UseCMBService: 0
     AutoSpawnPlayerPrefabClientSide: 1
+    NetworkMessageMetrics: 1
     NetworkProfilingMetrics: 1
     OldPrefabList: []
   RunInBackground: 1
