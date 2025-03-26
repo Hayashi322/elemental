@@ -294,13 +294,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3.5
-  jumpForce: 4
+  jumpForce: 6
   groundCheck: {fileID: 5559052151892277450}
   groundCheckRadius: 0.2
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  maxJumpCount: 2
+  maxJumpCount: 1
   dashSpeed: 7
   dashTime: 0.2
   dashCooldown: 1

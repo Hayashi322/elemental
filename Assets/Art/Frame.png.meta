@@ -1,10 +1,7 @@
 fileFormatVersion: 2
-guid: 15fe70f83db402b47afd6a8af3941adb
+guid: e3681d0c635b0ab41a42bddd6ff9f1d1
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: -6195319811734669289
-    second: "BG full \u0E15\u0E31\u0E27\u0E2D\u0E22\u0E48\u0E32\u0E07_0"
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,13 +43,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 500
+  spriteBorder: {x: 50, y: 50, z: 50, w: 50}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -96,37 +93,28 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: "BG full \u0E15\u0E31\u0E27\u0E2D\u0E22\u0E48\u0E32\u0E07_0"
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1920
-        height: 1080
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7187d97947dc50aa0800000000000000
-      internalID: -6195319811734669289
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
-    internalID: 0
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
@@ -134,8 +122,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      "BG full \u0E15\u0E31\u0E27\u0E2D\u0E22\u0E48\u0E32\u0E07_0": -6195319811734669289
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

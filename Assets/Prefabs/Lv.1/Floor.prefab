@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9119446397736228096}
   - component: {fileID: 4413349942771763137}
-  - component: {fileID: 1630184630557809864}
+  - component: {fileID: 4782460913511417980}
   m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
@@ -88,8 +88,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!68 &1630184630557809864
-EdgeCollider2D:
+--- !u!61 &4782460913511417980
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -122,12 +122,15 @@ EdgeCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.14104068}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 19.2, y: 2.52}
+    newSize: {x: 19.2, y: 2.52}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 19.2, y: 2.2379186}
   m_EdgeRadius: 0
-  m_Points:
-  - {x: -9.6, y: 0}
-  - {x: 9.6, y: 0}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0

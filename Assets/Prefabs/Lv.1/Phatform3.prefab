@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8173353339226890626}
   - component: {fileID: 8268135753796936129}
-  - component: {fileID: -6344947273929572480}
+  - component: {fileID: 2528729136647331329}
   m_Layer: 0
   m_Name: Phatform3
   m_TagString: Untagged
@@ -88,8 +88,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!68 &-6344947273929572480
-EdgeCollider2D:
+--- !u!61 &2528729136647331329
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -122,12 +122,15 @@ EdgeCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.012485027, y: -0.018727362}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 4.87, y: 1.48}
+    newSize: {x: 4.87, y: 1.48}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 4.7701206, y: 1.2927262}
   m_EdgeRadius: 0
-  m_Points:
-  - {x: -2.435, y: 0}
-  - {x: 2.435, y: 0}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0
