@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-public class PlayerController : MonoBehaviour
+using Unity.Netcode;
+public class PlayerController : NetworkBehaviour
 {
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
@@ -19,7 +20,7 @@ public class PlayerController : MonoBehaviour
     private float dashTimeCounter;
     private float dashCooldownTimer = 0f;
     private bool isDashing;
-    private Vector2 dashDirection; // ทิศทางของแดช
+    private Vector2 dashDirection;
     private bool canDash = true;
     [Header("Attack Settings")]
     public Transform attackPoint;
@@ -35,6 +36,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        if (!IsOwner) return;
         // ตรวจสอบการอยู่บนพื้น
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         if (isGrounded) jumpCount = 0;
@@ -83,18 +85,17 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         dashTimeCounter = dashTime;
         dashCooldownTimer = Time.time + dashCooldown;
-        // คำนวณทิศทางแดช
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         if (horizontalInput == 0) horizontalInput = isFacingRight ? 1 : -1;
         dashDirection = new Vector2(horizontalInput, 0).normalized;
-        rb.linearVelocity = Vector2.zero; // รีเซ็ตความเร็วก่อนแดช
-        rb.gravityScale = 0; // ปิดแรงโน้มถ่วงขณะแดช
+        rb.linearVelocity = Vector2.zero;
+        rb.gravityScale = 0;
     }
     void StopDash()
     {
         isDashing = false;
-        rb.gravityScale = 1; // เปิดแรงโน้มถ่วงคืน
-        rb.linearVelocity = Vector2.zero; // หยุดความเร็วแดช
+        rb.gravityScale = 1;
+        rb.linearVelocity = Vector2.zero;
         Invoke(nameof(ResetDash), dashCooldown);
     }
     void ResetDash()
@@ -103,18 +104,34 @@ public class PlayerController : MonoBehaviour
     }
     bool HitWall()
     {
-        // ตรวจสอบว่าตัวละครชนกำแพงหรือไม่ (ใช้ Raycast)
         float rayDistance = 0.5f;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDirection, rayDistance, groundLayer);
         return hit.collider != null;
     }
     void Attack()
     {
-        /*Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
         foreach (Collider2D enemy in hitEnemies)
         {
-            enemy.GetComponent<EnemyHealth>()?.TakeDamage(attackDamage);
-        }*/
+            NetworkObject enemyNetObj = enemy.GetComponent<NetworkObject>();
+            if (enemyNetObj != null)
+            {
+                DealDamageServerRpc(enemyNetObj, attackDamage);
+                Debug.Log($"ส่งคำสั่งโจมตี {enemy.gameObject.name} ด้วยดาเมจ {attackDamage}");
+            }
+        }
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void DealDamageServerRpc(NetworkObjectReference enemyRef, int damage)
+    {
+        if (enemyRef.TryGet(out NetworkObject enemyObj))
+        {
+            Health health = enemyObj.GetComponent<Health>();
+            if (health != null)
+            {
+                health.TakeDamage(damage);
+            }
+        }
     }
     void ResetAttack()
     {
