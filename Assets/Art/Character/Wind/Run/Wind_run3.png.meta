@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: abba14106ccfc3447874f50f9cc19ef5
+guid: 4a0eaa6f3981e424cb6b5817a28dbb06
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7380318102672073011
-    second: Water_idle2_0
+      213: -2890624140874384706
+    second: Wind_run3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Water_idle2_0
+      name: Wind_run3_0
       rect:
         serializedVersion: 2
-        x: 502
-        y: 250
-        width: 900
-        height: 1459
+        x: 548
+        y: 196
+        width: 912
+        height: 1395
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 331672736382c6660800000000000000
-      internalID: 7380318102672073011
+      spriteID: eba7308b8a072e7d0800000000000000
+      internalID: -2890624140874384706
       vertices: []
       indices: 
       edges: []

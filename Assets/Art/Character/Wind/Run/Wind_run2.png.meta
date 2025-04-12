@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: e515a0619295c6745a640216fa32dd89
+guid: ed3aeb0618872f74aa80cb090efe7841
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 24022292027614170
-    second: Water_idle1_0
-  - first:
-      213: -6145938526369513419
-    second: Water_idle1_1
+      213: 8084341982860061739
+    second: Wind_run2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -103,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Water_idle1_0
+      name: Wind_run2_0
       rect:
         serializedVersion: 2
-        x: 542
-        y: 248
-        width: 1031
-        height: 1463
+        x: 547
+        y: 205
+        width: 911
+        height: 1390
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -118,30 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ad32ff6b528555000800000000000000
-      internalID: 24022292027614170
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Water_idle1_1
-      rect:
-        serializedVersion: 2
-        x: 1914
-        y: 1521
-        width: 34
-        height: 35
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5308b5c097d35baa0800000000000000
-      internalID: -6145938526369513419
+      spriteID: b2ca623633a513070800000000000000
+      internalID: 8084341982860061739
       vertices: []
       indices: 
       edges: []

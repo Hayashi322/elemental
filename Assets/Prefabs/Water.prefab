@@ -306,7 +306,7 @@ GameObject:
   - component: {fileID: -7659233469050911172}
   - component: {fileID: 4430872232092388680}
   m_Layer: 7
-  m_Name: Player
+  m_Name: Water
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
