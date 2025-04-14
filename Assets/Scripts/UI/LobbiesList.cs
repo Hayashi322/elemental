@@ -65,6 +65,7 @@ public class LobbiesList : MonoBehaviour
             string joinCode = joiningLobby.Data["JoinCode"].Value;
 
             await ClientSingleton.Instance.GameManager.StartClientAsync(joinCode);
+            UnityEngine.SceneManagement.SceneManager.LoadScene("CharacterSelect");
         }
         catch (LobbyServiceException e)
         {

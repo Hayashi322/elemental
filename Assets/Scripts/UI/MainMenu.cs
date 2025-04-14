@@ -14,6 +14,7 @@ public class MainMenu : MonoBehaviour
 
     public async void StartHost()
     {
+        HostSingleton.Instance.CreateHost();
         await HostSingleton.Instance.GameManager.StartHostAsync();
     }
 

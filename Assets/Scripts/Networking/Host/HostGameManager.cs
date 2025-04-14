@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +12,6 @@ using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class HostGameManager : IDisposable
 {
@@ -21,85 +20,96 @@ public class HostGameManager : IDisposable
     private string lobbyId;
 
     private NetworkServer networkServer;
-    internal object NetworkServer;
+    public NetworkServer Server => networkServer;
+
     private const int MaxConnections = 20;
     private const string GameSceneName = "Lv.1";
     private const string JoinCodeKey = "JoinCode";
+    private CharacterPrefabLibrary prefabLibrary;
+
+   
+
+    public HostGameManager(CharacterPrefabLibrary library)
+    {
+        this.prefabLibrary = library;
+    }
+
     public async Task StartHostAsync()
     {
+        // STEP 1: เตรียม Relay Allocation
         try
         {
             allocation = await RelayService.Instance.CreateAllocationAsync(MaxConnections);
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-            return;
-        }
-        try
-        {
             joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-            Debug.Log(joinCode);
             PlayerPrefs.SetString(JoinCodeKey, joinCode);
+            Debug.Log("✅ JoinCode: " + joinCode);
         }
         catch (Exception e)
         {
-            Debug.Log(e);
+            Debug.LogError(e);
             return;
         }
 
+        // STEP 2: ตั้งค่า Transport
         UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-
         RelayServerData relayServerData = allocation.ToRelayServerData("dtls");
         transport.SetRelayServerData(relayServerData);
 
+        // STEP 3: สร้าง Lobby
         try
         {
-            CreateLobbyOptions lobbyOptions = new CreateLobbyOptions();
-            lobbyOptions.IsPrivate = false;
-            lobbyOptions.Data = new Dictionary<string, DataObject>()
+            var playerName = PlayerPrefs.GetString(NameSelector.PlayerNameKey, "Unknown");
+            var lobbyOptions = new CreateLobbyOptions
             {
+                IsPrivate = false,
+                Data = new Dictionary<string, DataObject>
                 {
-                    "JoinCode",new DataObject(
-                        visibility: DataObject.VisibilityOptions.Member,
-                        value: joinCode
-                    )
+                    { "JoinCode", new DataObject(DataObject.VisibilityOptions.Member, joinCode) }
                 }
             };
-            string playerName = PlayerPrefs.GetString(NameSelector.PlayerNameKey, "Unknown");
-            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(
-                $"{playerName}'s Lobby", MaxConnections, lobbyOptions);
+
+            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync($"{playerName}'s Lobby", MaxConnections, lobbyOptions);
             lobbyId = lobby.Id;
 
             HostSingleton.Instance.StartCoroutine(HeartbeatLobby(15));
         }
         catch (LobbyServiceException e)
         {
-            Debug.Log(e);
+            Debug.LogError(e);
             return;
         }
 
-        networkServer = new NetworkServer(NetworkManager.Singleton);
+        // STEP 4: Debug ตรวจสอบ PrefabLibrary
+        Debug.Log("🔥 prefabLibrary = " + (prefabLibrary == null ? "❌ NULL" : "✅ OK"));
 
+        // STEP 5: สร้าง NetworkServer และส่ง prefab
+        networkServer = new NetworkServer(NetworkManager.Singleton);
+        networkServer.earthPrefab = prefabLibrary.earthPrefab;
+        networkServer.firePrefab = prefabLibrary.firePrefab;
+        networkServer.waterPrefab = prefabLibrary.waterPrefab;
+        networkServer.windPrefab = prefabLibrary.windPrefab;
+
+        // STEP 6: เตรียม Payload (รวม characterName ที่เลือกไว้)
         UserData userData = new UserData
         {
             userName = PlayerPrefs.GetString(NameSelector.PlayerNameKey, "Missing Name"),
-            userAuthId = AuthenticationService.Instance.PlayerId
+            userAuthId = AuthenticationService.Instance.PlayerId,
+            characterName = PlayerPrefs.GetString("SelectedCharacter", "Water") // ✅ เอาจาก PlayerPrefs
         };
         string payload = JsonUtility.ToJson(userData);
         byte[] payloadBytes = Encoding.UTF8.GetBytes(payload);
-
         NetworkManager.Singleton.NetworkConfig.ConnectionData = payloadBytes;
 
+        // STEP 7: เริ่ม Host!
         NetworkManager.Singleton.StartHost();
 
-        NetworkManager.Singleton.SceneManager.LoadScene(GameSceneName, LoadSceneMode.Single);
+        // (ถ้าจะเปลี่ยน Scene ให้ไปหลัง spawn player แล้ว)
+        // NetworkManager.Singleton.SceneManager.LoadScene(GameSceneName, LoadSceneMode.Single);
     }
 
     private IEnumerator HeartbeatLobby(float waitTimeSeconds)
     {
-        WaitForSecondsRealtime delay = new WaitForSecondsRealtime(waitTimeSeconds);
-
+        var delay = new WaitForSecondsRealtime(waitTimeSeconds);
         while (true)
         {
             LobbyService.Instance.SendHeartbeatPingAsync(lobbyId);
@@ -119,7 +129,7 @@ public class HostGameManager : IDisposable
             }
             catch (LobbyServiceException e)
             {
-                Debug.Log(e);
+                Debug.LogError(e);
             }
 
             lobbyId = string.Empty;
