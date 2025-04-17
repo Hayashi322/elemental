@@ -4,11 +4,16 @@ using UnityEngine.SceneManagement;
 
 public class CharacterSelect : NetworkBehaviour
 {
-
-    /*public void SelectCharacter(string characterName)
+    public void SelectCharacter(string characterName)
     {
         Debug.Log("🟡 SelectCharacter called with: " + characterName);
-        if (IsClient)
+
+        // 🔥 เช็คแค่ว่าเราเป็น Host (เจ้าของ Server) หรือไม่
+        if (IsHost)
+        {
+            SubmitCharacterSelectionServerRpc(characterName);
+        }
+        else
         {
             SubmitCharacterSelectionServerRpc(characterName);
         }
@@ -20,7 +25,7 @@ public class CharacterSelect : NetworkBehaviour
         Debug.Log("🟢 ServerRpc called with character: " + characterName);
 
         var clientId = rpcParams.Receive.SenderClientId;
-        var userData = HostSingleton.Instance.GameManager.GetUserDataByClientId(clientId);
+        var userData = HostSingleton.Instance.GameManager.Server.GetUserDataByClientId(clientId);
 
         if (userData != null)
         {
@@ -32,6 +37,5 @@ public class CharacterSelect : NetworkBehaviour
         {
             Debug.LogWarning("⚠️ userData not found!");
         }
-    }*/
-
+    }
 }

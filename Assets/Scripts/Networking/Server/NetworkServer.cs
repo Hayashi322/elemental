@@ -32,8 +32,8 @@ public class NetworkServer : IDisposable
         networkManager.OnClientConnectedCallback += OnClientConnected;
 
         // ✅ ใช้ delegate signature ใหม่ของ Netcode 2.3.0
-        //networkManager.SceneManager.OnLoadComplete -= OnSceneLoadCompleted;
-        //networkManager.SceneManager.OnLoadComplete += OnSceneLoadCompleted;
+        networkManager.SceneManager.OnLoadComplete -= OnSceneLoadCompleted;
+        networkManager.SceneManager.OnLoadComplete += OnSceneLoadCompleted;
 
     }
 
@@ -51,17 +51,11 @@ public class NetworkServer : IDisposable
     }
 
     // ✅ delegate แบบใหม่ที่ถูกต้องใน Netcode 2.3.0
-    private void OnSceneLoadCompleted(
-    string sceneName,
-    LoadSceneMode loadSceneMode,
-    List<ulong> clientsCompleted,
-    List<ulong> clientsTimedOut)
+    private void OnSceneLoadCompleted(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
-        if (sceneName != "Lv.1") return;
+        Debug.Log($"🎯 Scene {sceneName} loaded for client {clientId}");
 
-        Debug.Log($"🎯 Scene {sceneName} loaded → spawning players...");
-
-        foreach (ulong clientId in clientsCompleted)
+        if (sceneName == "Lv.1")
         {
             var userData = GetUserDataByClientId(clientId);
 
@@ -75,6 +69,7 @@ public class NetworkServer : IDisposable
             }
         }
     }
+
 
 
 
@@ -167,7 +162,7 @@ public class NetworkServer : IDisposable
         networkManager.OnClientConnectedCallback -= OnClientConnected;
         networkManager.OnServerStarted -= OnServerStarted;
 
-        //networkManager.SceneManager.OnLoadComplete -= OnSceneLoadCompleted;
+        networkManager.SceneManager.OnLoadComplete -= OnSceneLoadCompleted;
 
         if (networkManager.IsListening)
         {
