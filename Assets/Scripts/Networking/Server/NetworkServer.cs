@@ -15,6 +15,8 @@ public class NetworkServer : IDisposable
 
     private Dictionary<ulong, string> clientIdToAuth = new();
     private Dictionary<string, UserData> authIdToUserData = new();
+    private List<Vector3> availableSpawnPoints = new();
+    private List<Transform> spawnPoints = new List<Transform>();
 
     public NetworkServer(NetworkManager networkManager)
     {
@@ -26,18 +28,14 @@ public class NetworkServer : IDisposable
 
     private void OnServerStarted()
     {
-        Debug.Log("✅ Server started. Registering callbacks.");
+        Debug.Log("✅ Server started. Registering Callbacks.");
 
         networkManager.OnClientDisconnectCallback += OnClientDisconnect;
         networkManager.OnClientConnectedCallback += OnClientConnected;
 
-        // ✅ ใช้ delegate signature ใหม่ของ Netcode 2.3.0
         networkManager.SceneManager.OnLoadComplete -= OnSceneLoadCompleted;
         networkManager.SceneManager.OnLoadComplete += OnSceneLoadCompleted;
-
     }
-
-  
 
     private void OnClientConnected(ulong clientId)
     {
@@ -45,18 +43,20 @@ public class NetworkServer : IDisposable
 
         if (clientId == NetworkManager.Singleton.LocalClientId)
         {
-            Debug.Log("🧭 Host client connected — loading CharacterSelect scene...");
+            Debug.Log("🛁 Host client connected — loading CharacterSelect scene...");
             NetworkManager.Singleton.SceneManager.LoadScene("CharacterSelect", LoadSceneMode.Single);
         }
     }
 
-    // ✅ delegate แบบใหม่ที่ถูกต้องใน Netcode 2.3.0
     private void OnSceneLoadCompleted(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
         Debug.Log($"🎯 Scene {sceneName} loaded for client {clientId}");
 
         if (sceneName == "Lv.1")
         {
+            // ✅ เมื่อ Lv.1 โหลดเสร็จ → เตรียม spawn points ทันที
+            CacheSpawnPoints();
+
             var userData = GetUserDataByClientId(clientId);
 
             if (userData != null)
@@ -70,14 +70,60 @@ public class NetworkServer : IDisposable
         }
     }
 
+    private void InitializeSpawnPoints()
+    {
+        availableSpawnPoints = new List<Vector3>()
+        {
+            new Vector3(-7, 2, 0),
+            new Vector3(-7, -2, 0),
+            new Vector3(7, 3.5f, 0),
+            new Vector3(7, -1.5f, 0) 
+        };
+    }
 
+    private Vector3 GetAndRemoveRandomSpawnPoint()
+    {
+        int index = UnityEngine.Random.Range(0, availableSpawnPoints.Count);
+        Vector3 point = availableSpawnPoints[index];
+        availableSpawnPoints.RemoveAt(index);
+        return point;
+    }
 
+    private void SpawnCustomPlayerObject(ulong clientId, string characterName)
+    {
+        Debug.Log($"🧩 [Spawn] Requested for {clientId} with {characterName}");
 
+        GameObject prefab = GetCharacterPrefab(characterName);
+        if (prefab == null)
+        {
+            Debug.LogError($"❌ Character prefab for '{characterName}' not found!");
+            return;
+        }
+
+        // 📌 Cache SpawnPoints เฉพาะครั้งแรก
+        if (spawnPoints.Count == 0)
+        {
+            CacheSpawnPoints();
+        }
+
+        Vector3 spawnPos = GetUniqueSpawnPosition();
+        GameObject player = GameObject.Instantiate(prefab, spawnPos, Quaternion.identity);
+
+        NetworkObject netObj = player.GetComponent<NetworkObject>();
+        if (netObj == null)
+        {
+            Debug.LogError("❌ No NetworkObject on the spawned player prefab!");
+            return;
+        }
+
+        netObj.SpawnAsPlayerObject(clientId);
+        Debug.Log($"✅ Player spawned for {clientId} as {characterName} at {spawnPos}");
+    }
 
 
     private void OnClientDisconnect(ulong clientId)
     {
-        Debug.Log($"❎ Client disconnected: {clientId}");
+        Debug.Log($"❌ Client disconnected: {clientId}");
 
         if (clientIdToAuth.TryGetValue(clientId, out string authId))
         {
@@ -91,7 +137,7 @@ public class NetworkServer : IDisposable
         string payload = System.Text.Encoding.UTF8.GetString(request.Payload);
         UserData userData = JsonUtility.FromJson<UserData>(payload);
 
-        Debug.Log($"🔓 Approving connection for {userData.userName} ({userData.characterName})");
+        Debug.Log($"🔐 Approving connection for {userData.userName} ({userData.characterName})");
 
         clientIdToAuth[request.ClientNetworkId] = userData.userAuthId;
         authIdToUserData[userData.userAuthId] = userData;
@@ -100,33 +146,6 @@ public class NetworkServer : IDisposable
         response.CreatePlayerObject = false;
         response.Rotation = Quaternion.identity;
     }
-
-    private void SpawnCustomPlayerObject(ulong clientId, string characterName)
-    {
-        Debug.Log($"🧩 [Spawn] Requested for {clientId} with {characterName}");
-
-        GameObject prefab = GetCharacterPrefab(characterName);
-
-        if (prefab == null)
-        {
-            Debug.LogError($"❌ Character prefab for '{characterName}' not found!");
-            return;
-        }
-
-        Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-3f, 3f), 1f, 0);
-        GameObject player = GameObject.Instantiate(prefab, spawnPos, Quaternion.identity);
-
-        NetworkObject netObj = player.GetComponent<NetworkObject>();
-        if (netObj == null)
-        {
-            Debug.LogError("❌ No NetworkObject on the spawned player prefab!");
-            return;
-        }
-
-        netObj.SpawnAsPlayerObject(clientId);
-        Debug.Log($"✅ Player spawned for {clientId} as {characterName}");
-    }
-
 
     private GameObject GetCharacterPrefab(string characterName)
     {
@@ -151,6 +170,54 @@ public class NetworkServer : IDisposable
         return null;
     }
 
+    private void CacheSpawnPoints()
+    {
+        spawnPoints.Clear();
+        foreach (var obj in GameObject.FindGameObjectsWithTag("SpawnPoint"))
+        {
+            spawnPoints.Add(obj.transform);
+        }
+
+        if (spawnPoints.Count == 0)
+        {
+            Debug.LogWarning("⚠️ No spawn points found with tag 'SpawnPoint'!");
+        }
+        else
+        {
+            Debug.Log($"📌 Cached {spawnPoints.Count} spawn points.");
+        }
+    }
+
+
+
+    private Vector3 GetUniqueSpawnPosition()
+    {
+        if (spawnPoints.Count == 0)
+        {
+            Debug.LogWarning("⚠️ No spawn points available! Using (0,0,0).");
+            return Vector3.zero;
+        }
+
+        int index = UnityEngine.Random.Range(0, spawnPoints.Count);
+        Vector3 pos = spawnPoints[index].position;
+        spawnPoints.RemoveAt(index); 
+        return pos;
+    }
+
+    public bool AreAllPlayersReady()
+    {
+        foreach (var userData in authIdToUserData.Values)
+        {
+            if (!userData.isReady)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
     public void Dispose()
     {
         Debug.Log("🧹 Disposing NetworkServer...");
@@ -169,6 +236,4 @@ public class NetworkServer : IDisposable
             networkManager.Shutdown();
         }
     }
-
-    
 }

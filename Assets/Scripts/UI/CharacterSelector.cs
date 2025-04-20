@@ -1,41 +1,39 @@
-﻿using Unity.Netcode;
+﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CharacterSelect : NetworkBehaviour
 {
-    public void SelectCharacter(string characterName)
-    {
-        Debug.Log("🟡 SelectCharacter called with: " + characterName);
+    private Dictionary<ulong, bool> readyStatus = new();
 
-        // 🔥 เช็คแค่ว่าเราเป็น Host (เจ้าของ Server) หรือไม่
-        if (IsHost)
-        {
-            SubmitCharacterSelectionServerRpc(characterName);
-        }
-        else
-        {
-            SubmitCharacterSelectionServerRpc(characterName);
-        }
+    public void Ready()
+    {
+        SubmitReadyServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SubmitCharacterSelectionServerRpc(string characterName, ServerRpcParams rpcParams = default)
+    private void SubmitReadyServerRpc(ServerRpcParams rpcParams = default)
     {
-        Debug.Log("🟢 ServerRpc called with character: " + characterName);
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        readyStatus[clientId] = true;
 
-        var clientId = rpcParams.Receive.SenderClientId;
-        var userData = HostSingleton.Instance.GameManager.Server.GetUserDataByClientId(clientId);
+        Debug.Log($"✅ Client {clientId} is ready.");
 
-        if (userData != null)
+        if (AllPlayersReady())
         {
-            userData.characterName = characterName;
-            Debug.Log("✅ Character updated to: " + characterName);
+            Debug.Log("🎯 All players ready! Loading Lv.1 scene...");
             NetworkManager.Singleton.SceneManager.LoadScene("Lv.1", LoadSceneMode.Single);
         }
-        else
+    }
+
+    private bool AllPlayersReady()
+    {
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsIds)
         {
-            Debug.LogWarning("⚠️ userData not found!");
+            if (!readyStatus.ContainsKey(client) || !readyStatus[client])
+                return false;
         }
+        return true;
     }
 }
