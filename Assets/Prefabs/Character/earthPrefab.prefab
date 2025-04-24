@@ -12,13 +12,17 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -4155790208913736186, guid: 953da11d42b1f3c4db9dc59ee2d97d8e, type: 3}
+    - target: {fileID: 3262764089513461717, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 8fb1a453f9081364391fcf6f153e9e2c, type: 2}
     - target: {fileID: 3681065342253793616, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2890539385
+      value: 2425156879
       objectReference: {fileID: 0}
     - target: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: m_Name
-      value: Earth Variant
+      value: earthPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 8624637619618407759, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: m_LocalPosition.x

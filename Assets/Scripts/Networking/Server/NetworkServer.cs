@@ -134,6 +134,13 @@ public class NetworkServer : IDisposable
 
     private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
+        if (NetworkManager.Singleton.ConnectedClients.Count >= 2)
+        {
+            Debug.Log("❌ Rejecting connection: server full (2 players max)");
+            response.Approved = false;
+            return;
+        }
+
         string payload = System.Text.Encoding.UTF8.GetString(request.Payload);
         UserData userData = JsonUtility.FromJson<UserData>(payload);
 

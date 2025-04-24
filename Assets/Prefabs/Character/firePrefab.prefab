@@ -12,13 +12,17 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -1681403557479739774, guid: 707382e489e4afb469271207bb690021, type: 3}
+    - target: {fileID: 3262764089513461717, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: e68aeba5565a3e74f8951a611f579c43, type: 2}
     - target: {fileID: 3681065342253793616, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 3246017232
+      value: 3077794778
       objectReference: {fileID: 0}
     - target: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: m_Name
-      value: Water (1) Variant
+      value: firePrefab
       objectReference: {fileID: 0}
     - target: {fileID: 8624637619618407759, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: m_LocalPosition.x

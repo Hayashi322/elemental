@@ -22,7 +22,7 @@ public class HostGameManager : IDisposable
     private NetworkServer networkServer;
     public NetworkServer Server => networkServer;
 
-    private const int MaxConnections = 20;
+    private const int MaxConnections = 2;
     private const string GameSceneName = "Lv.1";
     private const string JoinCodeKey = "JoinCode";
     private CharacterPrefabLibrary prefabLibrary;

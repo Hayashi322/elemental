@@ -12,13 +12,17 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -2702681753156422189, guid: df40bb503f7b8904a8453c8e01da343a, type: 3}
+    - target: {fileID: 3262764089513461717, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: bf9864b9a4dfc7e4ea8517366d2618f0, type: 2}
     - target: {fileID: 3681065342253793616, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2062277290
+      value: 2128417018
       objectReference: {fileID: 0}
     - target: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: m_Name
-      value: Wind Variant
+      value: windPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 8624637619618407759, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: m_LocalPosition.x

@@ -1,39 +1,65 @@
-﻿using System.Collections.Generic;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CharacterSelect : NetworkBehaviour
 {
-    private Dictionary<ulong, bool> readyStatus = new();
+    public void SelectCharacter(string characterName)
+    {
+        Debug.Log("🟡 SelectCharacter called with: " + characterName);
+        if (IsClient)
+        {
+            SubmitCharacterSelectionServerRpc(characterName);
+        }
+    }
 
     public void Ready()
     {
-        SubmitReadyServerRpc();
+        Debug.Log("🟡 Ready button pressed");
+        if (IsClient)
+        {
+            SubmitReadyServerRpc();
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SubmitCharacterSelectionServerRpc(string characterName, ServerRpcParams rpcParams = default)
+    {
+        var clientId = rpcParams.Receive.SenderClientId;
+        var userData = HostSingleton.Instance.GameManager.Server.GetUserDataByClientId(clientId);
+
+        if (userData != null)
+        {
+            userData.characterName = characterName;
+            Debug.Log($"✅ Character updated to: {characterName}");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ userData not found!");
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void SubmitReadyServerRpc(ServerRpcParams rpcParams = default)
     {
-        ulong clientId = rpcParams.Receive.SenderClientId;
-        readyStatus[clientId] = true;
+        var clientId = rpcParams.Receive.SenderClientId;
+        var userData = HostSingleton.Instance.GameManager.Server.GetUserDataByClientId(clientId);
 
-        Debug.Log($"✅ Client {clientId} is ready.");
-
-        if (AllPlayersReady())
+        if (userData != null)
         {
-            Debug.Log("🎯 All players ready! Loading Lv.1 scene...");
-            NetworkManager.Singleton.SceneManager.LoadScene("Lv.1", LoadSceneMode.Single);
-        }
-    }
+            userData.isReady = true;
+            Debug.Log($"✅ Client {clientId} is Ready.");
 
-    private bool AllPlayersReady()
-    {
-        foreach (var client in NetworkManager.Singleton.ConnectedClientsIds)
-        {
-            if (!readyStatus.ContainsKey(client) || !readyStatus[client])
-                return false;
+            // ตรวจสอบว่า ทุกคน ready หรือยัง
+            if (HostSingleton.Instance.GameManager.Server.AreAllPlayersReady())
+            {
+                Debug.Log("🚀 All players are Ready! Loading Lv.1...");
+                NetworkManager.Singleton.SceneManager.LoadScene("Lv.1", LoadSceneMode.Single);
+            }
         }
-        return true;
+        else
+        {
+            Debug.LogWarning("⚠️ userData not found for Ready!");
+        }
     }
 }
