@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Unity.Netcode;
+using System.Collections.Generic;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -150,16 +151,24 @@ public class PlayerController : NetworkBehaviour
     void Attack()
     {
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+        HashSet<NetworkObject> alreadyHit = new HashSet<NetworkObject>();
+
         foreach (Collider2D enemy in hitEnemies)
         {
             NetworkObject enemyNetObj = enemy.GetComponent<NetworkObject>();
-            if (enemyNetObj != null)
+
+            if (enemyNetObj != null && !alreadyHit.Contains(enemyNetObj))
             {
                 DealDamageServerRpc(enemyNetObj, attackDamage);
                 Debug.Log($"ส่งคำสั่งโจมตี {enemy.gameObject.name} ด้วยดาเมจ {attackDamage}");
+
+                alreadyHit.Add(enemyNetObj); // ✅ บันทึกว่าเคยตีตัวนี้แล้ว
             }
         }
     }
+
+
 
     [ServerRpc(RequireOwnership = false)]
     private void DealDamageServerRpc(NetworkObjectReference enemyRef, int damage)

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,8 +17,8 @@ public class NetworkServer : IDisposable
 
     private Dictionary<ulong, string> clientIdToAuth = new();
     private Dictionary<string, UserData> authIdToUserData = new();
-    private List<Vector3> availableSpawnPoints = new();
     private List<Transform> spawnPoints = new List<Transform>();
+    private int nextSpawnIndex = 0;
 
     public NetworkServer(NetworkManager networkManager)
     {
@@ -54,7 +56,6 @@ public class NetworkServer : IDisposable
 
         if (sceneName == "Lv.1")
         {
-            // ✅ เมื่อ Lv.1 โหลดเสร็จ → เตรียม spawn points ทันที
             CacheSpawnPoints();
 
             var userData = GetUserDataByClientId(clientId);
@@ -70,54 +71,66 @@ public class NetworkServer : IDisposable
         }
     }
 
-    private void InitializeSpawnPoints()
+    public void SpawnCustomPlayerObject(ulong clientId, string characterName)
     {
-        availableSpawnPoints = new List<Vector3>()
+        HostSingleton.Instance.StartCoroutine(SpawnDelayed(clientId, characterName));
+    }
+
+    private IEnumerator SpawnDelayed(ulong clientId, string characterName)
+    {
+        // 🔁 Despawn เดิม (ถ้ามี)
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client))
         {
-            new Vector3(-7, 2, 0),
-            new Vector3(-7, -2, 0),
-            new Vector3(7, 3.5f, 0),
-            new Vector3(7, -1.5f, 0) 
-        };
-    }
+            if (client.PlayerObject != null && client.PlayerObject.IsSpawned)
+            {
+                Debug.Log($"🧹 Despawning old PlayerObject for client {clientId}");
 
-    private Vector3 GetAndRemoveRandomSpawnPoint()
-    {
-        int index = UnityEngine.Random.Range(0, availableSpawnPoints.Count);
-        Vector3 point = availableSpawnPoints[index];
-        availableSpawnPoints.RemoveAt(index);
-        return point;
-    }
+                var oldPlayerObject = client.PlayerObject;
+                oldPlayerObject.Despawn(true);
 
-    private void SpawnCustomPlayerObject(ulong clientId, string characterName)
-    {
-        Debug.Log($"🧩 [Spawn] Requested for {clientId} with {characterName}");
+                NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject = null;
+            }
+        }
+
+        yield return null; // ✅ รอให้ Netcode เคลียร์ก่อน
 
         GameObject prefab = GetCharacterPrefab(characterName);
         if (prefab == null)
         {
             Debug.LogError($"❌ Character prefab for '{characterName}' not found!");
-            return;
+            yield break;
         }
 
-        // 📌 Cache SpawnPoints เฉพาะครั้งแรก
-        if (spawnPoints.Count == 0)
-        {
-            CacheSpawnPoints();
-        }
-
-        Vector3 spawnPos = GetUniqueSpawnPosition();
+        Vector3 spawnPos = GetNextSpawnPosition();
         GameObject player = GameObject.Instantiate(prefab, spawnPos, Quaternion.identity);
+
+        // ✅ Reset health ก่อน spawn
+        Health health = player.GetComponent<Health>();
+        if (health != null)
+        {
+            health.ResetHealth();
+            Debug.Log($"🎯 Reset health for client {clientId} to {health.CurrentHealth.Value}");
+        }
 
         NetworkObject netObj = player.GetComponent<NetworkObject>();
         if (netObj == null)
         {
-            Debug.LogError("❌ No NetworkObject on the spawned player prefab!");
-            return;
+            Debug.LogError("❌ No NetworkObject on the spawned prefab!");
+            yield break;
         }
 
         netObj.SpawnAsPlayerObject(clientId);
-        Debug.Log($"✅ Player spawned for {clientId} as {characterName} at {spawnPos}");
+        Debug.Log($"✅ Spawned new PlayerObject for client {clientId} as {characterName} at {spawnPos}");
+
+        // ✅ ป้องกันการ spawn เงียบ (ซ้ำ)
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var connectedClient))
+        {
+            if (connectedClient.PlayerObject == null || !connectedClient.PlayerObject.IsSpawned)
+            {
+                connectedClient.PlayerObject = netObj;
+                Debug.Log($"🛠 Assigned new PlayerObject manually for client {clientId}");
+            }
+        }
     }
 
 
@@ -152,6 +165,10 @@ public class NetworkServer : IDisposable
         response.Approved = true;
         response.CreatePlayerObject = false;
         response.Rotation = Quaternion.identity;
+        // บันทึก Mapping ไว้ใน HostSingleton ด้วย
+        HostSingleton.Instance.CachedClientIdToAuth[request.ClientNetworkId] = userData.userAuthId;
+        HostSingleton.Instance.CachedAuthIdToUserData[userData.userAuthId] = userData;
+
     }
 
     private GameObject GetCharacterPrefab(string characterName)
@@ -173,9 +190,22 @@ public class NetworkServer : IDisposable
             {
                 return data;
             }
+            else
+            {
+                Debug.LogError($"❌ authId '{authId}' not found in authIdToUserData");
+            }
         }
+        else
+        {
+            Debug.LogError($"❌ clientId '{clientId}' not found in clientIdToAuth");
+        }
+
+        Debug.LogError($"❌ userData is NULL for client {clientId} in GetUserDataByClientId");
+        Debug.LogError($"🔍 Current clientIdToAuth keys: {string.Join(", ", clientIdToAuth.Keys)}");
+        Debug.LogError($"🔍 Current authIdToUserData keys: {string.Join(", ", authIdToUserData.Keys)}");
         return null;
     }
+
 
     private void CacheSpawnPoints()
     {
@@ -195,9 +225,7 @@ public class NetworkServer : IDisposable
         }
     }
 
-
-
-    private Vector3 GetUniqueSpawnPosition()
+    private Vector3 GetNextSpawnPosition()
     {
         if (spawnPoints.Count == 0)
         {
@@ -205,9 +233,8 @@ public class NetworkServer : IDisposable
             return Vector3.zero;
         }
 
-        int index = UnityEngine.Random.Range(0, spawnPoints.Count);
-        Vector3 pos = spawnPoints[index].position;
-        spawnPoints.RemoveAt(index); 
+        Vector3 pos = spawnPoints[nextSpawnIndex].position;
+        nextSpawnIndex = (nextSpawnIndex + 1) % spawnPoints.Count;
         return pos;
     }
 
@@ -223,8 +250,16 @@ public class NetworkServer : IDisposable
         return true;
     }
 
+    public Dictionary<ulong, string> GetClientIdToAuth() => clientIdToAuth;
+    public Dictionary<string, UserData> GetAuthIdToUserData() => authIdToUserData;
 
+    public void RestoreMappings(Dictionary<ulong, string> cidToAuth, Dictionary<string, UserData> authToUser)
+    {
+        clientIdToAuth = new Dictionary<ulong, string>(cidToAuth);
+        authIdToUserData = new Dictionary<string, UserData>(authToUser);
 
+        Debug.Log($"♻️ Restored mappings. clientIdToAuth: {clientIdToAuth.Count}, authIdToUserData: {authIdToUserData.Count}");
+    }
     public void Dispose()
     {
         Debug.Log("🧹 Disposing NetworkServer...");

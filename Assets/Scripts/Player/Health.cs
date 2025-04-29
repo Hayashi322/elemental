@@ -1,17 +1,25 @@
 ﻿using System;
 using Unity.Netcode;
 using UnityEngine;
+using System.Collections;
+
+
 public class Health : NetworkBehaviour
 {
     public NetworkVariable<int> CurrentHealth = new NetworkVariable<int>();
     [field: SerializeField] public int MaxHealth { get; private set; } = 100;
+
     private bool isDead;
-    public Action<Health> OnDie;
+
     public override void OnNetworkSpawn()
     {
-        if (!IsServer) return;
-        CurrentHealth.Value = MaxHealth;
+        if (IsServer)
+        {
+            CurrentHealth.Value = MaxHealth;
+            isDead = false;
+        }
     }
+
     public void TakeDamage(int damageValue)
     {
         if (IsServer)
@@ -23,65 +31,68 @@ public class Health : NetworkBehaviour
             TakeDamageServerRpc(damageValue);
         }
     }
+
     [ServerRpc(RequireOwnership = false)]
     private void TakeDamageServerRpc(int damageValue)
     {
         ApplyDamage(damageValue);
     }
+
     private void ApplyDamage(int damageValue)
     {
-        Debug.Log($"[ApplyDamage] Called on {(IsServer ? "Server" : "Client")} for {gameObject.name}");
         if (isDead) return;
+
         ModifyHealth(-damageValue);
-        Debug.Log($"{gameObject.name} ถูกโจมตี! เลือดเหลือ {CurrentHealth.Value}");
-        if (CurrentHealth.Value == 0)
-        {
-            Die();
-        }
+        Debug.Log($"🩸 {gameObject.name} โดนโจมตี! เหลือ {CurrentHealth.Value}");
     }
-    public void RestoreHealth(int healValue)
-    {
-        if (IsServer)
-        {
-            ModifyHealth(healValue);
-        }
-        else
-        {
-            RestoreHealthServerRpc(healValue);
-        }
-    }
-    [ServerRpc(RequireOwnership = false)]
-    private void RestoreHealthServerRpc(int healValue)
-    {
-        ModifyHealth(healValue);
-    }
+
     private void ModifyHealth(int value)
     {
         if (isDead) return;
+
         int newHealth = CurrentHealth.Value + value;
         CurrentHealth.Value = Mathf.Clamp(newHealth, 0, MaxHealth);
-        if (CurrentHealth.Value == 0 && !isDead)
+
+        if (CurrentHealth.Value <= 0 && !isDead)
         {
-            OnDie?.Invoke(this);
             isDead = true;
+            Die();
         }
     }
-    private void Die()
+
+    public void ResetHealth()
     {
-        if (isDead) return;
-        Debug.Log($"{gameObject.name} ตายแล้ว!");
-        isDead = true;
         if (IsServer)
         {
-            NetworkObject netObj = GetComponent<NetworkObject>();
-            if (netObj != null)
+            isDead = false;
+            CurrentHealth.Value = MaxHealth;
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log($"💀 {gameObject.name} ตายแล้ว!");
+
+        if (IsServer)
+        {
+            if (GameRoundManager.Instance != null)
             {
-                netObj.Despawn(true); // ลบ GameObject จากทั้ง Server และ Client
+                GameRoundManager.Instance.OnPlayerDied(OwnerClientId);
             }
             else
             {
-                Debug.LogWarning("NetworkObject not found on object with Health.cs");
+                Debug.LogWarning("⚠️ GameRoundManager.Instance is NULL!");
             }
         }
+
+        // Despawn และลบออกจาก Network
+        var netObj = GetComponent<NetworkObject>();
+        if (netObj != null && netObj.IsSpawned)
+        {
+            netObj.Despawn(true); // ✅ ทำลายจริง เพราะจะโหลดซีนใหม่
+        }
     }
+
+
+
 }
