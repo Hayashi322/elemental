@@ -20,6 +20,12 @@ public class HostSingleton : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // ✅ เพิ่มตัวจับเวลาให้กับ HostSingleton
+            if (GetComponent<ClientSceneTimer>() == null)
+            {
+                gameObject.AddComponent<ClientSceneTimer>();
+            }
         }
         else
         {
@@ -39,8 +45,12 @@ public class HostSingleton : MonoBehaviour
 
         Server = new NetworkServer(NetworkManager.Singleton);
 
-        // 🔁 Restore mapping **ทันที**
+        yield return null; // ✅ รอ 1 เฟรมก่อน Restore
+
+        // 🔁 ต้องแน่ใจว่าเรียกทันทีหลังสร้าง Server
         Server.RestoreMappings(CachedClientIdToAuth, CachedAuthIdToUserData);
+
+        Debug.Log("✅ Server created and mappings restored.");
     }
 
     public void CreateHost()

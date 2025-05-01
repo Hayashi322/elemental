@@ -76,22 +76,18 @@ public class Health : NetworkBehaviour
         if (IsServer)
         {
             if (GameRoundManager.Instance != null)
-            {
                 GameRoundManager.Instance.OnPlayerDied(OwnerClientId);
-            }
             else
-            {
-                Debug.LogWarning("⚠️ GameRoundManager.Instance is NULL!");
-            }
-        }
+                Debug.LogWarning("⚠️ GameRoundManager.Instance is NULL");
 
-        // Despawn และลบออกจาก Network
-        var netObj = GetComponent<NetworkObject>();
-        if (netObj != null && netObj.IsSpawned)
-        {
-            netObj.Despawn(true); // ✅ ทำลายจริง เพราะจะโหลดซีนใหม่
+            var netObj = GetComponent<NetworkObject>();
+            if (netObj != null && netObj.IsSpawned)
+            {
+                netObj.Despawn(true); // ✅ Only server can despawn
+            }
         }
     }
+
 
 
 

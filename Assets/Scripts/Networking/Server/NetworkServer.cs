@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -52,24 +51,20 @@ public class NetworkServer : IDisposable
 
     private void OnSceneLoadCompleted(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
     {
-        Debug.Log($"🎯 Scene {sceneName} loaded for client {clientId}");
-
         if (sceneName == "Lv.1")
         {
-            CacheSpawnPoints();
-
             var userData = GetUserDataByClientId(clientId);
-
             if (userData != null)
             {
                 SpawnCustomPlayerObject(clientId, userData.characterName);
             }
             else
             {
-                Debug.LogWarning($"⚠️ userData for client {clientId} is null. Cannot spawn player.");
+                Debug.LogWarning($"⚠️ userData is NULL for client {clientId} in OnSceneLoadCompleted");
             }
         }
     }
+
 
     public void SpawnCustomPlayerObject(ulong clientId, string characterName)
     {
@@ -147,29 +142,23 @@ public class NetworkServer : IDisposable
 
     private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        if (NetworkManager.Singleton.ConnectedClients.Count >= 2)
-        {
-            Debug.Log("❌ Rejecting connection: server full (2 players max)");
-            response.Approved = false;
-            return;
-        }
-
         string payload = System.Text.Encoding.UTF8.GetString(request.Payload);
         UserData userData = JsonUtility.FromJson<UserData>(payload);
 
-        Debug.Log($"🔐 Approving connection for {userData.userName} ({userData.characterName})");
-
+        // บันทึก mapping ทันที
         clientIdToAuth[request.ClientNetworkId] = userData.userAuthId;
         authIdToUserData[userData.userAuthId] = userData;
 
-        response.Approved = true;
-        response.CreatePlayerObject = false;
-        response.Rotation = Quaternion.identity;
-        // บันทึก Mapping ไว้ใน HostSingleton ด้วย
+        // แคชไว้ใน HostSingleton ด้วย (ถ้ายังไม่ได้ทำ)
         HostSingleton.Instance.CachedClientIdToAuth[request.ClientNetworkId] = userData.userAuthId;
         HostSingleton.Instance.CachedAuthIdToUserData[userData.userAuthId] = userData;
 
+        response.Approved = true;
+        response.CreatePlayerObject = false;
+        Debug.Log($"📌 Approval: clientId={request.ClientNetworkId}, userAuthId={userData.userAuthId}, character={userData.characterName}");
+
     }
+
 
     private GameObject GetCharacterPrefab(string characterName)
     {
@@ -258,7 +247,9 @@ public class NetworkServer : IDisposable
         clientIdToAuth = new Dictionary<ulong, string>(cidToAuth);
         authIdToUserData = new Dictionary<string, UserData>(authToUser);
 
-        Debug.Log($"♻️ Restored mappings. clientIdToAuth: {clientIdToAuth.Count}, authIdToUserData: {authIdToUserData.Count}");
+        Debug.Log($"♻️ Restored mappings.");
+        Debug.Log($"🔁 clientIdToAuth keys: {string.Join(", ", clientIdToAuth.Keys)}");
+        Debug.Log($"🔁 authIdToUserData keys: {string.Join(", ", authIdToUserData.Keys)}");
     }
     public void Dispose()
     {
