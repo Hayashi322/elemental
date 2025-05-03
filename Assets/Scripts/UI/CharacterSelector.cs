@@ -1,17 +1,11 @@
 ﻿using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Unity.Services.Core;
 using Unity.Services.Analytics;
 using System.Collections.Generic;
 
 public class CharacterSelect : NetworkBehaviour
 {
-    async void Awake()
-    {
-        await UnityServices.InitializeAsync();
-    }
-
     public void SelectCharacter(string characterName)
     {
         Debug.Log("🟡 SelectCharacter called with: " + characterName);
@@ -41,9 +35,8 @@ public class CharacterSelect : NetworkBehaviour
             userData.characterName = characterName;
             Debug.Log($"✅ Character updated to: {characterName}");
 
-            // ✅ ใช้ CustomEvent แบบนี้
             var customEvent = new CustomEvent("character_selected");
-            customEvent["player_id"] = clientId.ToString(); // หรือจะใช้เป็น int ก็ได้ ถ้าแน่ใจว่าไม่เกินขนาด
+            customEvent["player_id"] = clientId.ToString();
             customEvent["character_name"] = characterName;
 
             AnalyticsService.Instance.RecordEvent(customEvent);

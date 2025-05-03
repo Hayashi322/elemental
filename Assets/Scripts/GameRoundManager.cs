@@ -1,17 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Services.Analytics;
-using System.Collections;
 
 public class GameRoundManager : NetworkBehaviour
 {
     public static GameRoundManager Instance;
 
     public NetworkVariable<int> NetworkRound = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone);
-
     private Dictionary<ulong, int> playerScores = new();
     private const int maxWins = 2;
     private int currentRound = 1;
@@ -42,7 +41,7 @@ public class GameRoundManager : NetworkBehaviour
         ulong winnerClientId = GetOpponent(deadClientId);
         if (winnerClientId == ulong.MaxValue)
         {
-            Debug.LogWarning("⚠️ Opponent left the game — auto win for remaining player.");
+            Debug.LogWarning("⚠️ Opponent left — auto win for remaining player.");
             foreach (var clientId in NetworkManager.Singleton.ConnectedClients.Keys)
             {
                 if (clientId != deadClientId)
@@ -78,7 +77,7 @@ public class GameRoundManager : NetworkBehaviour
                     { "character_name", winnerData.characterName }
                 });
 
-                Debug.Log($"📊 Match Winner Character: {winnerData.characterName}");
+                Debug.Log("✅ Analytics event sent for: " + winnerData.characterName);
             }
             else
             {
@@ -95,8 +94,6 @@ public class GameRoundManager : NetworkBehaviour
             ReloadBattleScene();
         }
     }
-
-
 
     public bool IsWinner(ulong clientId)
     {
@@ -116,7 +113,7 @@ public class GameRoundManager : NetworkBehaviour
             if (clientId != deadClientId)
                 return clientId;
         }
-        Debug.LogError("❌ No opponent found! Cannot assign win.");
+        Debug.LogError("❌ No opponent found!");
         return ulong.MaxValue;
     }
 
@@ -131,7 +128,7 @@ public class GameRoundManager : NetworkBehaviour
 
     private IEnumerator DelayedSceneLoad(string sceneName, ulong clientId)
     {
-        yield return new WaitForSeconds(1.0f); // ✅ รอให้ Analytics ส่งข้อมูลเสร็จก่อนเปลี่ยนซีน
+        yield return new WaitForSeconds(1.0f);
 
         SendLoadSceneClientRpc(sceneName, new ClientRpcParams
         {
@@ -141,7 +138,6 @@ public class GameRoundManager : NetworkBehaviour
             }
         });
     }
-
 
     [ClientRpc]
     private void SendLoadSceneClientRpc(string sceneName, ClientRpcParams clientRpcParams = default)
