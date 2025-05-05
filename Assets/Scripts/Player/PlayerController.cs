@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Unity.Netcode;
 using System.Collections.Generic;
+using Unity.Services.Analytics;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -36,6 +37,7 @@ public class PlayerController : NetworkBehaviour
     private float lastAttackTime;
 
     private Animator animator;
+    private int dashCount = 0;
 
     // Animation Sync
     public NetworkVariable<bool> isRunningNet = new(writePerm: NetworkVariableWritePermission.Owner);
@@ -126,6 +128,18 @@ public class PlayerController : NetworkBehaviour
         dashDirection = new Vector2(horizontalInput, 0).normalized;
         rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0;
+
+        // ✅ Count Dash
+        dashCount++;
+
+        // ✅ Send Analytics
+        AnalyticsService.Instance.RecordEvent(new CustomEvent("player_dash")
+    {
+        { "client_id", NetworkManager.Singleton.LocalClientId.ToString() },
+        { "dash_count", dashCount }
+    });
+
+        Debug.Log($"📊 Dash count: {dashCount} by client {NetworkManager.Singleton.LocalClientId}");
     }
 
     void StopDash()
