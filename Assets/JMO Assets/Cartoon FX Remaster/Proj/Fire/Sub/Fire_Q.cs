@@ -1,22 +1,49 @@
+﻿using Unity.Netcode;
 using UnityEngine;
 
-public class Fire_Q : MonoBehaviour
+public class Fire_Q : NetworkBehaviour
 {
-    public float speed = 10f;
-    public GameObject explosionEffect;
+    public GameObject fireBallPrefab;
+    public Transform firePoint;
+    public float fireSpeed = 8f;
+    private Vector2 moveDirection;
 
-    private Rigidbody2D rb;
+    private PlayerController playerController;
 
-    void Start()
+    private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.linearVelocity = transform.right * speed; // Fireball moves in the direction it's facing
+        playerController = GetComponent<PlayerController>();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void Update()
     {
-        // Spawn explosion effect and destroy the fireball
-        Instantiate(explosionEffect, transform.position, transform.rotation);
-        Destroy(gameObject);  // Destroy fireball after collision
+        if (!IsOwner) return;
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            ShootServerRpc(playerController.IsFacingRight);
+        }
+    }
+    public void SetDirection(Vector2 direction)
+    {
+        moveDirection = direction.normalized;
+    }
+
+    private void FixedUpdate()
+    {
+        if (!IsServer) return;
+
+        GetComponent<Rigidbody2D>().linearVelocity = moveDirection * fireSpeed;
+    }
+
+    [ServerRpc]
+    void ShootServerRpc(bool isFacingRight)
+    {
+        GameObject fireball = Instantiate(fireBallPrefab, firePoint.position, Quaternion.identity);
+        fireball.GetComponent<NetworkObject>().Spawn();
+
+        Vector2 direction = isFacingRight ? Vector2.right : Vector2.left;
+        fireball.GetComponent<Rigidbody2D>().linearVelocity = direction * fireSpeed;
+        fireball.transform.localScale = new Vector3(isFacingRight ? 1 : -1, 1, 1);
     }
 }

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5119060773701458950}
   - component: {fileID: 4109295868488123457}
   - component: {fileID: 1575069784223745934}
+  - component: {fileID: -3964618176131098582}
   m_Layer: 0
   m_Name: Fire_F
   m_TagString: Untagged
@@ -4914,6 +4915,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   explosionEffect: {fileID: 2635244437191619254, guid: 2c0ae94a221c332488b195610dea1220, type: 3}
+--- !u!114 &-3964618176131098582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9012822104758333014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 0
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1001 &4147608744351882942
 PrefabInstance:
   m_ObjectHideFlags: 0

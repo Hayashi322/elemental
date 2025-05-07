@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -1681403557479739774, guid: 707382e489e4afb469271207bb690021, type: 3}
+    - target: {fileID: 344611224799976973, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3262764089513461717, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: m_Controller
       value: 
@@ -67,5 +71,41 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2795997481023729789}
   m_SourcePrefab: {fileID: 100100000, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+--- !u!1 &4807491295804141346 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+  m_PrefabInstance: {fileID: 3693293374639698984}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-2795997481023729789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4807491295804141346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07dcb6078cff66c4c9eba8ccc11242b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  fireballPrefab: {fileID: 4913843188228756486, guid: 77aac5f9209487e47a6750997e32b78d, type: 3}
+  flameEffectPrefab: {fileID: 6351263736088674628, guid: 0d95a333b855ccd40b5210a34b5911bb, type: 3}
+  infernoWavePrefab: {fileID: 9012822104758333014, guid: bd89caddc7e041d4398a2ec0b75a623a, type: 3}
+  meteorPrefab: {fileID: 5838576592758444730, guid: 1f04a16ae96e0024f9faa80b1cc8bb39, type: 3}
+  castPoint: {fileID: 6279041793280834772}
+  fireballSpeed: 10
+  qCooldown: 2
+  eCooldown: 5
+  rCooldown: 8
+  fCooldown: 12
+--- !u!4 &6279041793280834772 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7233508877665700092, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+  m_PrefabInstance: {fileID: 3693293374639698984}
+  m_PrefabAsset: {fileID: 0}

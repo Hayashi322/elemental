@@ -15,7 +15,7 @@ public class PlayerController : NetworkBehaviour
     private int jumpCount = 0;
     public int maxJumpCount = 2;
     private Rigidbody2D rb;
-    private bool isFacingRight = true;
+    public bool IsFacingRight { get; private set; } = true; // ✅ ใช้ property จริง
 
     [Header("Dash Settings")]
     public float dashSpeed = 15f;
@@ -51,17 +51,10 @@ public class PlayerController : NetworkBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-    }
-
     private void Update()
     {
-        // Update only by owner
         if (IsOwner)
         {
-            // ตรวจสอบการอยู่บนพื้น
             isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
             if (isGrounded) jumpCount = 0;
 
@@ -70,8 +63,8 @@ public class PlayerController : NetworkBehaviour
                 float moveInput = Input.GetAxis("Horizontal");
                 rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
-                if (moveInput > 0 && !isFacingRight) Flip();
-                else if (moveInput < 0 && isFacingRight) Flip();
+                if (moveInput > 0 && !IsFacingRight) Flip();
+                else if (moveInput < 0 && IsFacingRight) Flip();
 
                 if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumpCount)
                 {
@@ -103,18 +96,24 @@ public class PlayerController : NetworkBehaviour
                 Invoke(nameof(ResetAttack), attackCooldown);
             }
 
-            // Update Animation State (Network Variables)
             isRunningNet.Value = Mathf.Abs(rb.linearVelocity.x) > 0.1f;
             isJumpingUpNet.Value = !isGrounded && rb.linearVelocity.y > 0.1f;
             isFallingNet.Value = !isGrounded && rb.linearVelocity.y < -0.1f;
             isGroundedNet.Value = isGrounded;
         }
 
-        // Animator update (runs on all clients)
         animator.SetBool("isRunning", isRunningNet.Value);
         animator.SetBool("isJumpingUp", isJumpingUpNet.Value);
         animator.SetBool("isFalling", isFallingNet.Value);
         animator.SetBool("isGrounded", isGroundedNet.Value);
+    }
+
+    void Flip()
+    {
+        IsFacingRight = !IsFacingRight;
+        Vector3 scaler = transform.localScale;
+        scaler.x *= -1;
+        transform.localScale = scaler;
     }
 
     void StartDash()
@@ -124,22 +123,18 @@ public class PlayerController : NetworkBehaviour
         dashTimeCounter = dashTime;
         dashCooldownTimer = Time.time + dashCooldown;
         float horizontalInput = Input.GetAxisRaw("Horizontal");
-        if (horizontalInput == 0) horizontalInput = isFacingRight ? 1 : -1;
+        if (horizontalInput == 0) horizontalInput = IsFacingRight ? 1 : -1;
         dashDirection = new Vector2(horizontalInput, 0).normalized;
         rb.linearVelocity = Vector2.zero;
         rb.gravityScale = 0;
 
-        // ✅ Count Dash
         dashCount++;
 
-        // ✅ Send Analytics
         AnalyticsService.Instance.RecordEvent(new CustomEvent("player_dash")
-    {
-        { "client_id", NetworkManager.Singleton.LocalClientId.ToString() },
-        { "dash_count", dashCount }
-    });
-
-        Debug.Log($"📊 Dash count: {dashCount} by client {NetworkManager.Singleton.LocalClientId}");
+        {
+            { "client_id", NetworkManager.Singleton.LocalClientId.ToString() },
+            { "dash_count", dashCount }
+        });
     }
 
     void StopDash()
@@ -150,10 +145,8 @@ public class PlayerController : NetworkBehaviour
         Invoke(nameof(ResetDash), dashCooldown);
     }
 
-    void ResetDash()
-    {
-        canDash = true;
-    }
+    void ResetDash() => canDash = true;
+    void ResetAttack() => isAttacking = false;
 
     bool HitWall()
     {
@@ -165,24 +158,18 @@ public class PlayerController : NetworkBehaviour
     void Attack()
     {
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        HashSet<NetworkObject> alreadyHit = new();
 
-        HashSet<NetworkObject> alreadyHit = new HashSet<NetworkObject>();
-
-        foreach (Collider2D enemy in hitEnemies)
+        foreach (var enemy in hitEnemies)
         {
             NetworkObject enemyNetObj = enemy.GetComponent<NetworkObject>();
-
             if (enemyNetObj != null && !alreadyHit.Contains(enemyNetObj))
             {
                 DealDamageServerRpc(enemyNetObj, attackDamage);
-                Debug.Log($"ส่งคำสั่งโจมตี {enemy.gameObject.name} ด้วยดาเมจ {attackDamage}");
-
-                alreadyHit.Add(enemyNetObj); // ✅ บันทึกว่าเคยตีตัวนี้แล้ว
+                alreadyHit.Add(enemyNetObj);
             }
         }
     }
-
-
 
     [ServerRpc(RequireOwnership = false)]
     private void DealDamageServerRpc(NetworkObjectReference enemyRef, int damage)
@@ -190,24 +177,8 @@ public class PlayerController : NetworkBehaviour
         if (enemyRef.TryGet(out NetworkObject enemyObj))
         {
             Health health = enemyObj.GetComponent<Health>();
-            if (health != null)
-            {
-                health.TakeDamage(damage);
-            }
+            if (health != null) health.TakeDamage(damage);
         }
-    }
-
-    void ResetAttack()
-    {
-        isAttacking = false;
-    }
-
-    void Flip()
-    {
-        isFacingRight = !isFacingRight;
-        Vector3 scaler = transform.localScale;
-        scaler.x *= -1;
-        transform.localScale = scaler;
     }
 
     private void OnDrawGizmosSelected()
