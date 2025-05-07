@@ -15,7 +15,7 @@ public class PlayerController : NetworkBehaviour
     private int jumpCount = 0;
     public int maxJumpCount = 2;
     private Rigidbody2D rb;
-    public bool IsFacingRight { get; private set; } = true; // ✅ ใช้ property จริง
+    public bool IsFacingRight { get; private set; } = true;
 
     [Header("Dash Settings")]
     public float dashSpeed = 15f;
@@ -39,11 +39,13 @@ public class PlayerController : NetworkBehaviour
     private Animator animator;
     private int dashCount = 0;
 
-    // Animation Sync
     public NetworkVariable<bool> isRunningNet = new(writePerm: NetworkVariableWritePermission.Owner);
     public NetworkVariable<bool> isJumpingUpNet = new(writePerm: NetworkVariableWritePermission.Owner);
     public NetworkVariable<bool> isFallingNet = new(writePerm: NetworkVariableWritePermission.Owner);
     public NetworkVariable<bool> isGroundedNet = new(writePerm: NetworkVariableWritePermission.Owner);
+
+    private bool tripleJumpEnabled = false;
+    private float tripleJumpTimer = 0f;
 
     void Awake()
     {
@@ -58,6 +60,8 @@ public class PlayerController : NetworkBehaviour
             isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
             if (isGrounded) jumpCount = 0;
 
+            HandleTripleJumpTimer();
+
             if (!isDashing)
             {
                 float moveInput = Input.GetAxis("Horizontal");
@@ -66,7 +70,8 @@ public class PlayerController : NetworkBehaviour
                 if (moveInput > 0 && !IsFacingRight) Flip();
                 else if (moveInput < 0 && IsFacingRight) Flip();
 
-                if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumpCount)
+                int maxAllowedJump = tripleJumpEnabled ? maxJumpCount + 1 : maxJumpCount;
+                if (Input.GetKeyDown(KeyCode.Space) && jumpCount < maxAllowedJump)
                 {
                     rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
                     jumpCount++;
@@ -178,6 +183,23 @@ public class PlayerController : NetworkBehaviour
         {
             Health health = enemyObj.GetComponent<Health>();
             if (health != null) health.TakeDamage(damage);
+        }
+    }
+
+    public void EnableTripleJump(float duration)
+    {
+        tripleJumpEnabled = true;
+        tripleJumpTimer = duration;
+    }
+
+    private void HandleTripleJumpTimer()
+    {
+        if (!tripleJumpEnabled) return;
+
+        tripleJumpTimer -= Time.deltaTime;
+        if (tripleJumpTimer <= 0f)
+        {
+            tripleJumpEnabled = false;
         }
     }
 

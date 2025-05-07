@@ -8,10 +8,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1839450524879262224, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 344611224799976973, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -2702681753156422189, guid: df40bb503f7b8904a8453c8e01da343a, type: 3}
+    - target: {fileID: 344611224799976973, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3262764089513461717, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
       propertyPath: m_Controller
       value: 
@@ -67,5 +75,41 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8224214847611069836}
   m_SourcePrefab: {fileID: 100100000, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+--- !u!4 &7258187344150910067 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7233508877665700092, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+  m_PrefabInstance: {fileID: 61035062006635663}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8155528601370625925 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+  m_PrefabInstance: {fileID: 61035062006635663}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8224214847611069836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8155528601370625925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa96eef86a636a14995d517dc47ab03f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  windSlashPrefab: {fileID: 1458307038753894395, guid: cdc7e272951e90c42b790783e0e479ed, type: 3}
+  galeStepEffectPrefab: {fileID: 5731041763438422582, guid: be7702aa42fa1544f85292de2553cd38, type: 3}
+  hurricanePrefab: {fileID: 879626489874667650, guid: c5551c6bafb15414d94477056194c89e, type: 3}
+  stormWindPrefab: {fileID: 8132467992496583196, guid: 09501a679f6457948a7eb87e6c274128, type: 3}
+  lightningStrikePrefab: {fileID: 7746619034556605649, guid: 7fbb29fce0d822e4fbc92be004fdfe9d, type: 3}
+  castPoint: {fileID: 7258187344150910067}
+  qCooldown: 2
+  eCooldown: 5
+  rCooldown: 8
+  fCooldown: 12

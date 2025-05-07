@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 4569122488684013235}
   - component: {fileID: 3701157643541183328}
   - component: {fileID: 1272860145599615222}
+  - component: {fileID: 1711680136696330977}
+  - component: {fileID: 2431116155813101206}
   m_Layer: 0
   m_Name: Wind_Q
   m_TagString: Untagged
@@ -4870,7 +4872,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1458307038753894395}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 53b057b7a73398c4bb33b49d054f3770, type: 3}
   m_Name: 
@@ -4911,7 +4913,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.07735181, y: 0.15235028}
+  m_Offset: {x: -0.1089226, y: 0.15235028}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -4921,8 +4923,48 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.8561769, y: 0.85320705}
+  m_Size: {x: 0.85669565, y: 0.85320705}
   m_EdgeRadius: 0
+--- !u!114 &1711680136696330977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1458307038753894395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2484493692
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &2431116155813101206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1458307038753894395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3672f318671498047ac463435f7aef45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  speed: 20
+  slashEffect: {fileID: 2353600328335836179, guid: ceec7516237b4104b94300043ca39784, type: 3}
 --- !u!1 &2380979043520783849
 GameObject:
   m_ObjectHideFlags: 0
