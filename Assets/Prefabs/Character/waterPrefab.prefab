@@ -79,6 +79,7 @@ GameObject:
   - component: {fileID: -7659233469050911172}
   - component: {fileID: 4430872232092388680}
   - component: {fileID: 3262764089513461717}
+  - component: {fileID: -1839450524879262224}
   m_Layer: 7
   m_Name: waterPrefab
   m_TagString: Player
@@ -370,3 +371,25 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-1839450524879262224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8211914923912190730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c742b5b1a6679094ea97644fa1558c59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  waterShotPrefab: {fileID: 1501237422941889760, guid: 005e81ad280ef244d981cc9453ce440a, type: 3}
+  aquaShieldPrefab: {fileID: 3414886746374389737, guid: 283b803a129d48942869f8a1e4f329b1, type: 3}
+  tidalWavePrefab: {fileID: 6791199998056182017, guid: 711b36925bccc9e4098d2a26b7bb4aa0, type: 3}
+  oceanBlessingPrefab: {fileID: 6080410818323264133, guid: 07bdc08b23edbda438c387c3af97a3bc, type: 3}
+  castPoint: {fileID: 7233508877665700092}
+  qCooldown: 2
+  eCooldown: 5
+  rCooldown: 8
+  fCooldown: 12

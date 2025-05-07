@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 4579010805676275458}
   - component: {fileID: 2353512135148767080}
   - component: {fileID: 2749085663979667321}
+  - component: {fileID: -6868316467748892351}
+  - component: {fileID: -7823651400700815371}
   m_Layer: 0
   m_Name: Water_Q
   m_TagString: Untagged
@@ -4889,7 +4891,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1501237422941889760}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fddea9c19551abe4381e047ffc5ac368, type: 3}
   m_Name: 
@@ -4959,6 +4961,46 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: -0.010179251}
   m_Radius: 0.37408146
+--- !u!114 &-6868316467748892351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1501237422941889760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3767903130
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &-7823651400700815371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1501237422941889760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a693951109daff4797e662969a18762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  speed: 10
+  explosionEffect: {fileID: 185518, guid: 2ef436b6c6313494daf190cd68ebf636, type: 3}
 --- !u!1 &5219304303670251927
 GameObject:
   m_ObjectHideFlags: 0
