@@ -30,7 +30,7 @@ public class PlayerController : NetworkBehaviour
     [Header("Attack Settings")]
     public Transform attackPoint;
     public float attackRange = 0.5f;
-    public int attackDamage = 20;
+    public int attackDamage = 5;
     public LayerMask enemyLayers;
     private bool isAttacking = false;
     public float attackCooldown = 0.5f;
