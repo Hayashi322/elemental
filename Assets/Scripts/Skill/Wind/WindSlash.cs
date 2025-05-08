@@ -4,6 +4,7 @@ using UnityEngine;
 public class WindSlash : NetworkBehaviour
 {
     public float speed = 12f;
+    public int damage = 7; // ✅ เพิ่มตัวแปรดาเมจ
     public GameObject slashEffect;
 
     private Rigidbody2D rb;
@@ -34,11 +35,21 @@ public class WindSlash : NetworkBehaviour
     {
         if (!IsServer) return;
 
+        if (other.CompareTag("Player"))
+        {
+            Health health = other.GetComponent<Health>();
+            if (health != null)
+                health.TakeDamage(damage);
+        }
+
         if (slashEffect != null)
         {
             Instantiate(slashEffect, transform.position, Quaternion.identity);
         }
 
-        GetComponent<NetworkObject>().Despawn();
+        if (TryGetComponent<NetworkObject>(out var netObj))
+        {
+            netObj.Despawn(true); // ✅ ถูกต้อง: ให้ Server เรียก Despawn
+        }
     }
 }

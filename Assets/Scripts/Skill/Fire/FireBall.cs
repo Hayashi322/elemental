@@ -5,45 +5,58 @@ public class FireBall : NetworkBehaviour
 {
     public float speed = 8f;
     public GameObject explosionEffect;
+    public int damage = 10; // ✅ ดาเมจของ FireBall
 
     private Rigidbody2D rb;
     private Vector2 moveDirection;
-
-    public int damage;
+    private ulong ownerClientId;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void SetDirection(Vector2 direction)
+    public void SetDirection(Vector2 direction, ulong ownerId)
     {
         moveDirection = direction.normalized;
+        ownerClientId = ownerId;
 
-        // ✅ ให้ Rigidbody เคลื่อนที่
-        rb.linearVelocity = moveDirection * speed;
+        // เคลื่อนที่
+        if (rb != null)
+            rb.linearVelocity = moveDirection * speed;
 
-        // ✅ หมุนพาร์ติเคิล (โดยกลับ localScale.x)
-        if (direction.x < 0)
-            transform.localScale = new Vector3(-1f, 1f, 1f);  // หันซ้าย
-        else
-            transform.localScale = new Vector3(1f, 1f, 1f);   // หันขวา
+        // หมุน sprite/prefab ไปตามทิศ
+        transform.localScale = new Vector3(direction.x < 0 ? -1f : 1f, 1f, 1f);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (!IsServer) return;
 
-        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Wall"))
+        // โดน Player คนอื่น
+        if (collision.gameObject.CompareTag("Player"))
         {
-            // ✅ สร้างเอฟเฟกต์ระเบิด
-            if (explosionEffect != null)
+            var netObj = collision.gameObject.GetComponent<NetworkObject>();
+            if (netObj != null && netObj.OwnerClientId != ownerClientId)
             {
-                Instantiate(explosionEffect, transform.position, Quaternion.identity);
+                var health = collision.gameObject.GetComponent<Health>();
+                if (health != null)
+                {
+                    health.TakeDamage(damage);
+                }
             }
+        }
 
-            // ✅ ทำลายลูกไฟ (เฉพาะฝั่ง Server เพราะใช้ Netcode)
-            NetworkObject.Despawn(true);
+        // ทำลายเมื่อชนอะไรก็ตาม
+        if (collision.gameObject.CompareTag("Ground") ||
+            collision.gameObject.CompareTag("Wall") ||
+            collision.gameObject.CompareTag("Player"))
+        {
+            if (explosionEffect != null)
+                Instantiate(explosionEffect, transform.position, Quaternion.identity);
+
+            if (TryGetComponent<NetworkObject>(out var netObj))
+                netObj.Despawn(true);
         }
     }
 }

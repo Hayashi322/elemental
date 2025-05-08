@@ -53,10 +53,9 @@ public class WaterSkillController : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.R) && rTimer <= 0)
         {
             Vector2 dir = playerController.IsFacingRight ? Vector2.right : Vector2.left;
-            SpawnTidalWaveServerRpc(transform.position, dir); // ✅ ส่งทิศทางถูกต้อง
+            SpawnTidalWaveServerRpc(transform.position, dir);
             rTimer = rCooldown;
         }
-
 
         if (Input.GetKeyDown(KeyCode.F) && fTimer <= 0)
         {
@@ -71,7 +70,10 @@ public class WaterSkillController : NetworkBehaviour
         GameObject waterShot = Instantiate(waterShotPrefab, position, Quaternion.identity);
 
         if (waterShot.TryGetComponent<WaterShot>(out var shot))
-            shot.SetDirection(direction);
+        {
+            shot.SetDirection(direction, OwnerClientId);
+            shot.damage = 8; // ✅ ดาเมจของ Q
+        }
 
         if (waterShot.TryGetComponent<NetworkObject>(out var netObj))
             netObj.Spawn();
@@ -99,20 +101,24 @@ public class WaterSkillController : NetworkBehaviour
 
         if (wave.TryGetComponent<TidalWave>(out var waveScript))
         {
-            waveScript.SetDirection(direction); // ✅ เรียกก่อน Spawn
+            waveScript.SetDirection(direction);
+            waveScript.damage = 6; // ✅ ดาเมจของ R
         }
 
         if (wave.TryGetComponent<NetworkObject>(out var netObj))
-        {
             netObj.Spawn();
-        }
     }
-
 
     [ServerRpc]
     void SpawnOceanBlessingServerRpc(Vector3 pos)
     {
         GameObject blessing = Instantiate(oceanBlessingPrefab, pos, Quaternion.identity);
+
+        if (blessing.TryGetComponent<OceanBlessing>(out var ocean))
+        {
+            ocean.healAmount = 5; // ✅ Heal ของ F
+        }
+
         blessing.GetComponent<NetworkObject>().Spawn();
         blessing.transform.SetParent(transform);
     }

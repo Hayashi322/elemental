@@ -4,12 +4,24 @@ using UnityEngine;
 public class OceanBlessing : NetworkBehaviour
 {
     public float duration = 3f;
+    public int healAmount = 5;
 
     private void Start()
     {
         if (IsServer)
         {
-            // ทำลายหลังจาก 3 วินาทีบน Server
+            // ฟื้นพลังให้เจ้าของ (parent)
+            if (transform.parent != null)
+            {
+                Health health = transform.parent.GetComponent<Health>();
+                if (health != null)
+                {
+                    health.Heal(healAmount);
+                    Debug.Log($"💧 OceanBlessing healed {health.name} for {healAmount} HP");
+                }
+            }
+
+            // ลบตัวเองหลังจาก 3 วินาที
             Invoke(nameof(Despawn), duration);
         }
     }

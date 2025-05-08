@@ -75,8 +75,8 @@ public class FireSkillController : NetworkBehaviour
 
         if (fireball.TryGetComponent<FireBall>(out var fireScript))
         {
-            fireScript.SetDirection(direction);
-            fireScript.damage = 10; // ✅ Q สกิลทำดาเมจ 10
+            fireScript.damage = 10;
+            fireScript.SetDirection(direction, OwnerClientId); // ✅ ส่ง owner ID
         }
 
         if (fireball.TryGetComponent<NetworkObject>(out var netObj))
@@ -104,9 +104,16 @@ public class FireSkillController : NetworkBehaviour
         if (infernoWavePrefab == null) return;
 
         GameObject wave = Instantiate(infernoWavePrefab, position, Quaternion.identity);
+
+        if (wave.TryGetComponent<InfernoWave>(out var waveScript))
+        {
+            waveScript.damage = 3; // ✅ ดาเมจของ InfernoWave
+        }
+
         if (wave.TryGetComponent<NetworkObject>(out var netObj))
             netObj.Spawn();
     }
+
 
     [ServerRpc]
     void MeteorRainServerRpc(Vector3 spawnPosition)
@@ -114,10 +121,17 @@ public class FireSkillController : NetworkBehaviour
         if (meteorPrefab == null) return;
 
         GameObject meteor = Instantiate(meteorPrefab, spawnPosition, Quaternion.identity);
+
         if (meteor.TryGetComponent<Rigidbody2D>(out var rb))
             rb.linearVelocity = Vector2.down * 7f;
+
+        if (meteor.TryGetComponent<Meteor>(out var meteorScript))
+        {
+            meteorScript.damage = 5; // ✅ ดาเมจของ Meteor
+        }
 
         if (meteor.TryGetComponent<NetworkObject>(out var netObj))
             netObj.Spawn();
     }
+
 }

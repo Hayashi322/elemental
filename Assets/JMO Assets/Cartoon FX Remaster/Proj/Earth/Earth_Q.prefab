@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 7856767873886394771}
   - component: {fileID: 2689202315988190084}
   - component: {fileID: 1064917835353798379}
-  - component: {fileID: 2413009287664464609}
   - component: {fileID: 2472264332275310339}
   - component: {fileID: 54625239792687582}
+  - component: {fileID: -41524438433810374}
+  - component: {fileID: 7201979038015891917}
   m_Layer: 0
   m_Name: Earth_Q
   m_TagString: Untagged
@@ -4958,20 +4959,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &2413009287664464609
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4422736389664815919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d62de36298ac89e449a11eda16ca08c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 10
-  explosionEffect: {fileID: 0}
 --- !u!50 &2472264332275310339
 Rigidbody2D:
   serializedVersion: 5
@@ -5045,6 +5032,45 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.735875, y: 0.66746265}
   m_EdgeRadius: 0
+--- !u!114 &-41524438433810374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4422736389664815919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 142541393
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &7201979038015891917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4422736389664815919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cb06997285f84049b51ce7f9894ed95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  speed: 8
 --- !u!1001 &2235606881755059414
 PrefabInstance:
   m_ObjectHideFlags: 0

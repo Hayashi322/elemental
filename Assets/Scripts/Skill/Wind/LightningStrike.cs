@@ -26,7 +26,7 @@ public class LightningStrike : NetworkBehaviour
         {
             Health health = other.GetComponent<Health>();
             if (health != null)
-                health.TakeDamage(5); // ฟ้าผ่าดาเมจ
+                health.TakeDamage(12); // ฟ้าผ่าดาเมจ
         }
     }
 }

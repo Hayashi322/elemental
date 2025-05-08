@@ -88,6 +88,13 @@ public class Health : NetworkBehaviour
         }
     }
 
+    public void Heal(int amount)
+    {
+        if (IsServer)
+        {
+            CurrentHealth.Value = Mathf.Min(CurrentHealth.Value + amount, MaxHealth);
+        }
+    }
 
 
 

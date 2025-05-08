@@ -95,8 +95,13 @@ public class WindSkillController : NetworkBehaviour
     void SpawnHurricaneServerRpc(Vector3 position)
     {
         GameObject hurricane = Instantiate(hurricanePrefab, position, Quaternion.identity);
+
+        if (hurricane.TryGetComponent<Hurricane>(out var script))
+            script.SetOwner(OwnerClientId); // ✅ ส่งเจ้าของ
+
         hurricane.GetComponent<NetworkObject>().Spawn();
     }
+
 
     [ServerRpc]
     void CastStormFuryServerRpc()

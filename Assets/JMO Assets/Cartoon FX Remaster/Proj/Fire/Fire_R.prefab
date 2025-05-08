@@ -4917,6 +4917,7 @@ GameObject:
   - component: {fileID: 572162490786448232}
   - component: {fileID: 3569733867728236264}
   - component: {fileID: 7172987738497970761}
+  - component: {fileID: 3539077735217009543}
   m_Layer: 0
   m_Name: Fire_R
   m_TagString: Untagged
@@ -9892,7 +9893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 352662385
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -9905,6 +9906,23 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &3539077735217009543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5838576592758444730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf9a4c68890e9d248971ac5f757754d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  damage: 3
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &6708676991867187486
 GameObject:
   m_ObjectHideFlags: 0

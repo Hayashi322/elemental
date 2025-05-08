@@ -75,5 +75,40 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6788579873039519757}
   m_SourcePrefab: {fileID: 100100000, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+--- !u!4 &2917366187086643290 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7233508877665700092, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+  m_PrefabInstance: {fileID: 5484826793916434598}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4460975914987869100 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8211914923912190730, guid: 463ce69b54c408146afa6d37351830c5, type: 3}
+  m_PrefabInstance: {fileID: 5484826793916434598}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6788579873039519757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4460975914987869100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34cd2f21efd18c649afb3222d8f167e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  rockThrowPrefab: {fileID: 4422736389664815919, guid: 2526a89496d82bd4c995068fbe756986, type: 3}
+  earthWallPrefab: {fileID: 4760816558945619931, guid: c48c792ed7288c448a760754019ee89a, type: 3}
+  seismicSlamPrefab: {fileID: 1124643196677269318, guid: 6e0be123bd5b1e8408064f673f2f6805, type: 3}
+  terraShockwavePrefab: {fileID: 2000231791555682575, guid: 698d03b796173b34a975caba88fc411e, type: 3}
+  castPoint: {fileID: 2917366187086643290}
+  qCooldown: 2
+  eCooldown: 5
+  rCooldown: 8
+  fCooldown: 12
